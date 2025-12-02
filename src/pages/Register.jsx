@@ -16,11 +16,15 @@ export default function Register() {
     setError(null);
 
     try {
-      await signUp({ fullName, email, password });
-      // Redirect to login or dashboard. User might need to confirm email depending on Supabase settings,
-      // but usually for dev/test it's auto-confirmed or we can just redirect to login.
-      // The requirement says: "redirect ke halaman dashboard / login". I'll redirect to login for clarity.
-      navigate('/login');
+      const { data } = await signUp({ fullName, email, password });
+      
+      if (data?.session) {
+        // Auto-login successful
+        navigate('/');
+      } else {
+        // Email confirmation required or no session returned
+        navigate('/login');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
