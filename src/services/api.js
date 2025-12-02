@@ -63,3 +63,17 @@ export const updateCourseProgress = async (courseId, isGraduated) => {
   });
   if (error) throw error;
 };
+
+
+export const askCoddy = async (question) => {
+  const { data, error } = await supabase.functions.invoke('coddy-chat', {
+    body: { question },
+  });
+
+  if (error) {
+    console.error('coddy-chat error', error);
+    throw error;
+  }
+
+  return data;
+};

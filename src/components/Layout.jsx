@@ -1,7 +1,7 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signOut } from '../services/api';
-import { LogOut, User, BookOpen } from 'lucide-react';
+import { LogOut, User, BookOpen, MessageCircle } from 'lucide-react';
 
 export default function Layout() {
   const { user } = useAuth();
@@ -27,6 +27,10 @@ export default function Layout() {
           
           {user ? (
             <div className="flex items-center gap-4">
+              <Link to="/coddy-chat" className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <MessageCircle size={16} />
+                Ask Coddy
+              </Link>
               <span className="text-sm text-secondary flex items-center gap-2">
                 <User size={16} />
                 {user.email}

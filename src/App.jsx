@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LearningPathDetail from './pages/LearningPathDetail';
+import CoddyChat from './pages/CoddyChat';
 import './App.css'; // Keep original CSS or remove if not needed, but index.css covers most.
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           }>
             <Route path="/" element={<Dashboard />} />
             <Route path="/learning-path/:id" element={<LearningPathDetail />} />
+            <Route path="/coddy-chat" element={<CoddyChat />} />
           </Route>
         </Routes>
       </AuthProvider>
