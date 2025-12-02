@@ -1,16 +1,19 @@
 :root {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
-  --border-color: #334155;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0fdf4;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --accent-primary: #22c55e;
+  --accent-hover: #16a34a;
+  --border-color: #e2e8f0;
   --success: #22c55e;
   --danger: #ef4444;
-  --radius: 0.5rem;
+  --radius: 0.75rem;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 * {
@@ -21,9 +24,9 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -46,61 +49,79 @@ button {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   border-radius: var(--radius);
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.2s;
   border: none;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.025em;
 }
 
 .btn-primary {
   background-color: var(--accent-primary);
   color: white;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
 }
 
 .btn-primary:hover {
   background-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(34, 197, 94, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .btn-outline {
-  background-color: transparent;
+  background-color: white;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
 }
 
 .btn-outline:hover {
-  border-color: var(--text-secondary);
-  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background-color: var(--bg-secondary);
 }
 
 .input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
+  background-color: white;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  font-size: 0.95rem;
 }
 
 .input:focus {
   border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
 .card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
 }
 
 .text-center { text-align: center; }
@@ -114,13 +135,14 @@ button {
 .w-full { width: 100%; }
 .text-sm { font-size: 0.875rem; }
 .text-secondary { color: var(--text-secondary); }
+.text-danger { color: var(--danger); }
 .font-bold { font-weight: 700; }
 
 /* Progress Bar */
 .progress-track {
   width: 100%;
   height: 8px;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -130,3 +152,23 @@ button {
   background-color: var(--success);
   transition: width 0.5s ease;
 }
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-blink {
+  animation: blink 1.5s infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+

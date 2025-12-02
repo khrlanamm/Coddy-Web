@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUp } from '../services/api';
+import { Loader2 } from 'lucide-react';
 
 export default function Register() {
   const [fullName, setFullName] = useState('');
@@ -79,8 +80,15 @@ export default function Register() {
               minLength={6}
             />
           </div>
-          <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign Up'}
+          <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" size={18} />
+                <span>Creating account...</span>
+              </>
+            ) : (
+              'Sign Up'
+            )}
           </button>
         </form>
 

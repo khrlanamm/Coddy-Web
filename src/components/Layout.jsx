@@ -1,27 +1,32 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signOut } from '../services/api';
-import { LogOut, User, BookOpen, MessageCircle } from 'lucide-react';
+import { LogOut, User, BookOpen, MessageCircle, Loader2 } from 'lucide-react';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import coddyLogo from '../assets/coddy.png';
+import { useState } from 'react';
 
 export default function Layout() {
   const { user } = useAuth();
   const { profile } = useCurrentUserProfile();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await signOut();
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', padding: '1rem 0' }}>
+      <header style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'white', padding: '1rem 0', boxShadow: 'var(--shadow-sm)' }}>
         <div className="container flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
             <img src={coddyLogo} alt="Coddy Logo" style={{ width: '24px', height: '24px' }} />
@@ -40,8 +45,8 @@ export default function Layout() {
                   ? profile.full_name.split(' ').slice(0, 2).join(' ') 
                   : user.email}
               </span>
-              <button onClick={handleLogout} className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
-                <LogOut size={14} style={{ marginRight: '0.25rem' }} />
+              <button onClick={handleLogout} className="btn btn-outline" disabled={isLoggingOut} style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {isLoggingOut ? <Loader2 className="animate-spin" size={14} /> : <LogOut size={14} />}
                 Logout
               </button>
             </div>

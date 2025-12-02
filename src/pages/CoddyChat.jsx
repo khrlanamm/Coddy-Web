@@ -145,8 +145,10 @@ export default function CoddyChat() {
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Bot size={18} color="white" />
               </div>
-              <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '0.75rem 1rem', borderRadius: 'var(--radius)' }}>
-                <Loader2 className="animate-spin" size={20} />
+              <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '0.75rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)' }}>
+                <span className="animate-blink" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                  Menyiapkan Jawaban...
+                </span>
               </div>
             </div>
           )}
