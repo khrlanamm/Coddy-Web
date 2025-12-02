@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { askCoddy } from '../services/api';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
-import clsx from 'clsx';
-
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -48,91 +46,52 @@ export default function CoddyChat() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', height: 'calc(100vh - 200px)', display: 'flex', flexDirection: 'column' }}>
-      <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+    <div className="max-w-3xl mx-auto h-[calc(100vh-140px)] flex flex-col">
+      <div className="card flex-1 flex flex-col overflow-hidden p-0 shadow-lg border-0 md:border">
         
         {/* Header */}
-        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ backgroundColor: 'var(--accent-primary)', padding: '0.5rem', borderRadius: '50%' }}>
-            <Bot size={24} color="white" />
+        <div className="p-4 border-b border-gray-200 bg-white flex items-center gap-3">
+          <div className="bg-green-100 p-2 rounded-full">
+            <Bot size={24} className="text-accent" />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.125rem', fontWeight: '600', lineHeight: 1 }}>Coddy Chat</h2>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Asisten Belajar Pribadi</span>
+            <h2 className="text-lg font-bold leading-none">Coddy Chat</h2>
+            <span className="text-xs text-secondary">Asisten Belajar Pribadi</span>
           </div>
         </div>
 
         {/* Messages Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-6 bg-slate-50">
           {messages.map((msg) => (
             <div 
               key={msg.id} 
-              style={{ 
-                display: 'flex', 
-                gap: '1rem', 
-                flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
-                alignItems: 'flex-start'
-              }}
+              className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
             >
               <div 
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  borderRadius: '50%', 
-                  backgroundColor: msg.role === 'user' ? 'var(--bg-secondary)' : 'var(--accent-primary)',
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  msg.role === 'user' ? 'bg-white border border-gray-200' : 'bg-accent-primary text-white'
+                }`}
               >
-                {msg.role === 'user' ? <User size={18} /> : <Bot size={18} color="white" />}
+                {msg.role === 'user' ? <User size={16} className="text-secondary" /> : <Bot size={16} />}
               </div>
               
-              <div style={{ maxWidth: '75%' }}>
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  marginBottom: '0.25rem', 
-                  color: 'var(--text-secondary)',
-                  textAlign: msg.role === 'user' ? 'right' : 'left'
-                }}>
+              <div className={`max-w-[85%] md:max-w-[75%]`}>
+                <div className={`text-xs mb-1 text-secondary ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                   {msg.role === 'user' ? 'Kamu' : 'Coddy'}
                 </div>
                 <div 
-                  style={{ 
-                    padding: '0.75rem 1rem', 
-                    borderRadius: 'var(--radius)', 
-                    backgroundColor: msg.role === 'user' ? 'var(--accent-primary)' : 'var(--bg-secondary)',
-                    color: msg.role === 'user' ? 'white' : 'var(--text-primary)',
-                    lineHeight: 1.6,
-                  }}
+                  className={`p-3 md:p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-accent-primary text-white rounded-tr-none' 
+                      : 'bg-white text-primary border border-gray-100 rounded-tl-none'
+                  }`}
                 >
                   {msg.role === 'assistant' ? (
-                    <ReactMarkdown 
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        p: ({node, ...props}) => <p style={{ marginBottom: '0.5rem', lastChild: { marginBottom: 0 } }} {...props} />,
-                        ul: ({node, ...props}) => <ul style={{ marginLeft: '1.5rem', marginBottom: '0.5rem' }} {...props} />,
-                        ol: ({node, ...props}) => <ol style={{ marginLeft: '1.5rem', marginBottom: '0.5rem' }} {...props} />,
-                        li: ({node, ...props}) => <li style={{ marginBottom: '0.25rem' }} {...props} />,
-                        a: ({node, ...props}) => <a style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }} {...props} />,
-                        code: ({node, inline, className, children, ...props}) => {
-                          return inline ? (
-                            <code style={{ backgroundColor: 'rgba(0,0,0,0.1)', padding: '0.2em 0.4em', borderRadius: '3px', fontSize: '0.9em' }} {...props}>
-                              {children}
-                            </code>
-                          ) : (
-                            <div style={{ overflowX: 'auto', backgroundColor: 'rgba(0,0,0,0.1)', padding: '1rem', borderRadius: '0.5rem', marginBottom: '0.5rem' }}>
-                              <code {...props}>
-                                {children}
-                              </code>
-                            </div>
-                          )
-                        }
-                      }}
-                    >
-                      {msg.content}
-                    </ReactMarkdown>
+                    <div className="markdown-content">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
                   ) : (
                     msg.content
                   )}
@@ -140,15 +99,17 @@ export default function CoddyChat() {
               </div>
             </div>
           ))}
+          
           {loading && (
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={18} color="white" />
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-accent-primary text-white flex items-center justify-center">
+                <Bot size={16} />
               </div>
-              <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '0.75rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)' }}>
-                <span className="animate-blink" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
-                  Menyiapkan Jawaban...
-                </span>
+              <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-2 text-secondary text-sm">
+                  <Loader2 size={14} className="animate-spin" />
+                  <span className="animate-pulse">Mengetik...</span>
+                </div>
               </div>
             </div>
           )}
@@ -156,24 +117,22 @@ export default function CoddyChat() {
         </div>
 
         {/* Input Area */}
-        <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>
-          <form onSubmit={handleSend} style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="p-4 border-t border-gray-200 bg-white">
+          <form onSubmit={handleSend} className="flex gap-2 relative">
             <input
               type="text"
-              className="input"
+              className="input pr-12 py-3"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Tanya sesuatu tentang progress belajarmu..."
+              placeholder="Tanya sesuatu..."
               disabled={loading}
-              style={{ flex: 1 }}
             />
             <button 
               type="submit" 
-              className="btn btn-primary" 
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-accent-primary text-white rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               disabled={!input.trim() || loading}
-              style={{ width: '48px', padding: 0 }}
             >
-              <Send size={20} />
+              <Send size={18} />
             </button>
           </form>
         </div>

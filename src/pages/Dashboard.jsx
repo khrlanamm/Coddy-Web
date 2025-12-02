@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchLearningPaths } from '../services/api';
-import { Book, Clock, CheckCircle } from 'lucide-react';
+import { Book, Clock, CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function Dashboard() {
   const [learningPaths, setLearningPaths] = useState([]);
@@ -23,42 +23,66 @@ export default function Dashboard() {
     loadData();
   }, []);
 
-  if (loading) return <div className="text-center text-secondary py-8">Loading learning paths...</div>;
-  if (error) return <div className="text-center text-danger py-8">Error: {error}</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="p-4 bg-red-50 text-danger rounded-lg text-center">
+      Error: {error}
+    </div>
+  );
 
   return (
     <div>
-      <h1 className="mb-4" style={{ fontSize: '2rem', fontWeight: 'bold' }}>Learning Paths</h1>
-      <p className="text-secondary mb-4" style={{ marginBottom: '2rem' }}>Select a path to start learning</p>
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Learning Paths</h1>
+        <p className="text-secondary">Select a path to start your coding journey</p>
+      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {learningPaths.map((lp) => (
-          <Link key={lp.learning_path_id} to={`/learning-path/${lp.learning_path_id}`} className="card" style={{ display: 'block', textDecoration: 'none', color: 'inherit', transition: 'transform 0.2s' }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem' }}>{lp.learning_path_name}</h3>
+          <Link 
+            key={lp.learning_path_id} 
+            to={`/learning-path/${lp.learning_path_id}`} 
+            className="card group hover:border-green-500 transition-all duration-300 flex flex-col h-full"
+          >
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-accent transition-colors">
+                {lp.learning_path_name}
+              </h3>
+              <p className="text-sm text-secondary line-clamp-2">
+                Master {lp.learning_path_name} with our comprehensive curriculum.
+              </p>
             </div>
             
-            <div className="flex items-center gap-4 text-sm text-secondary" style={{ marginBottom: '1rem' }}>
-              <div className="flex items-center gap-2">
-                <Book size={16} />
+            <div className="flex items-center gap-4 text-sm text-secondary mb-6">
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded">
+                <Book size={14} />
                 <span>{lp.total_courses} Courses</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded">
+                <Clock size={14} />
                 <span>{lp.total_hours} Hours</span>
               </div>
             </div>
 
-            <div style={{ marginTop: 'auto' }}>
-              <div className="flex justify-between text-sm mb-4" style={{ marginBottom: '0.5rem' }}>
-                <span className="text-secondary">Progress</span>
-                <span style={{ color: 'var(--accent-primary)', fontWeight: '500' }}>{Math.round(lp.progress_percent)}%</span>
+            <div className="mt-auto">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-secondary font-medium">Progress</span>
+                <span className="text-accent font-bold">{Math.round(lp.progress_percent)}%</span>
               </div>
-              <div className="progress-track">
+              <div className="progress-track mb-4">
                 <div 
                   className="progress-fill" 
                   style={{ width: `${lp.progress_percent}%` }}
                 ></div>
+              </div>
+              
+              <div className="flex items-center text-accent text-sm font-medium group-hover:translate-x-1 transition-transform">
+                Continue Learning <ArrowRight size={16} className="ml-1" />
               </div>
             </div>
           </Link>
