@@ -3,6 +3,9 @@ import { askCoddy } from '../services/api';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 export default function CoddyChat() {
   const [messages, setMessages] = useState([
     { id: 'welcome', role: 'assistant', content: 'Hai! Aku Coddy, asisten belajarmu 👋. Ada yang bisa aku bantu seputar roadmap belajarmu?' },
@@ -102,10 +105,37 @@ export default function CoddyChat() {
                     backgroundColor: msg.role === 'user' ? 'var(--accent-primary)' : 'var(--bg-secondary)',
                     color: msg.role === 'user' ? 'white' : 'var(--text-primary)',
                     lineHeight: 1.6,
-                    whiteSpace: 'pre-wrap'
                   }}
                 >
-                  {msg.content}
+                  {msg.role === 'assistant' ? (
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({node, ...props}) => <p style={{ marginBottom: '0.5rem', lastChild: { marginBottom: 0 } }} {...props} />,
+                        ul: ({node, ...props}) => <ul style={{ marginLeft: '1.5rem', marginBottom: '0.5rem' }} {...props} />,
+                        ol: ({node, ...props}) => <ol style={{ marginLeft: '1.5rem', marginBottom: '0.5rem' }} {...props} />,
+                        li: ({node, ...props}) => <li style={{ marginBottom: '0.25rem' }} {...props} />,
+                        a: ({node, ...props}) => <a style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }} {...props} />,
+                        code: ({node, inline, className, children, ...props}) => {
+                          return inline ? (
+                            <code style={{ backgroundColor: 'rgba(0,0,0,0.1)', padding: '0.2em 0.4em', borderRadius: '3px', fontSize: '0.9em' }} {...props}>
+                              {children}
+                            </code>
+                          ) : (
+                            <div style={{ overflowX: 'auto', backgroundColor: 'rgba(0,0,0,0.1)', padding: '1rem', borderRadius: '0.5rem', marginBottom: '0.5rem' }}>
+                              <code {...props}>
+                                {children}
+                              </code>
+                            </div>
+                          )
+                        }
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             </div>
