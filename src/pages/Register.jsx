@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUp } from '../services/api';
-import { Loader2, User, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Loader2, User, Mail, Lock, ArrowRight, Sun, Moon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../components/ui/card';
+import { useTheme } from '../hooks/useTheme';
 import logo from '../assets/logo.svg';
 
 export default function Register() {
@@ -15,6 +16,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +39,14 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 relative">
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 rounded-full p-2 text-foreground/60 hover:bg-accent hover:text-foreground transition-colors"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      </button>
       <Card className="w-full max-w-md border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur">
         <CardHeader className="space-y-1 flex flex-col items-center pb-6">
           <div className="w-12 h-12 bg-[#36BFB0]/10 rounded-full flex items-center justify-center mb-2">
