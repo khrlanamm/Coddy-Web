@@ -1,32 +1,36 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './hooks/useTheme';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import LearningPathDetail from './pages/LearningPathDetail';
 import CoddyChat from './pages/CoddyChat';
-import './App.css'; // Keep original CSS or remove if not needed, but index.css covers most.
+import Roadmap from './pages/Roadmap';
+import LearningPathDetail from './pages/LearningPathDetail';
+import './App.css';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          <Route element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/learning-path/:id" element={<LearningPathDetail />} />
-            <Route path="/coddy-chat" element={<CoddyChat />} />
-          </Route>
-        </Routes>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            <Route element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              {/* Redirect root to Chat as per requirement */}
+              <Route path="/" element={<CoddyChat />} /> 
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/learning-path/:id" element={<LearningPathDetail />} />
+            </Route>
+          </Routes>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   );

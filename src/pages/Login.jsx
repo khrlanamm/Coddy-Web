@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signIn } from '../services/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, Lock, ArrowRight, Sun, Moon } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../components/ui/card';
+import { useTheme } from '../hooks/useTheme';
+import logo from '../assets/logo.svg';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -9,6 +15,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,57 +33,97 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-      <div className="card">
-        <h2 className="text-center mb-4" style={{ fontSize: '1.5rem' }}>Welcome Back</h2>
-        <p className="text-center text-secondary mb-4">Sign in to continue your learning journey</p>
-        
-        {error && (
-          <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: 'var(--radius)', marginBottom: '1rem', fontSize: '0.875rem' }}>
-            {error}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 relative">
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 rounded-full p-2 text-foreground/60 hover:bg-accent hover:text-foreground transition-colors"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      </button>
+      <Card className="w-full max-w-md border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur">
+        <CardHeader className="space-y-1 flex flex-col items-center pb-6">
+          <div className="w-12 h-12 bg-[#36BFB0]/10 rounded-full flex items-center justify-center mb-2">
+            <img src={logo} alt="Coddy" className="w-8 h-8" />
           </div>
-        )}
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Email</label>
-            <input
-              type="email"
-              className="input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Password</label>
-            <input
-              type="password"
-              className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
-          <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={18} />
-                <span>Signing in...</span>
-              </>
-            ) : (
-              'Sign In'
+          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardDescription className="text-center">
+            Sign in to continue your learning journey
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md flex items-center gap-2">
+                <span className="font-medium">Error:</span> {error}
+              </div>
             )}
-          </button>
-        </form>
-
-        <div className="text-center mt-4 text-sm">
-          <span className="text-secondary">Don't have an account? </span>
-          <Link to="/register" style={{ fontWeight: '500' }}>Sign up</Link>
-        </div>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  className="pl-9"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link 
+                  to="/forgot-password" 
+                  className="text-xs text-[#36BFB0] hover:text-[#2da89a] hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  className="pl-9"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-[#36BFB0] hover:bg-[#2da89a] text-white" 
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign In <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700" />
+          <div className="text-center text-sm">
+            <span className="text-muted-foreground">Don't have an account? </span>
+            <Link to="/register" className="font-medium text-[#36BFB0] hover:text-[#2da89a] hover:underline">
+              Create an account
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

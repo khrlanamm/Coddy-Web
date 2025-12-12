@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchCoursesByLearningPath, updateCourseProgress } from '../services/api';
-import { ArrowLeft, Clock, CheckCircle, Circle } from 'lucide-react';
-import clsx from 'clsx';
+import { ArrowLeft, Clock, CheckCircle, Circle, BookOpen, Loader2 } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
+import { cn } from '../components/ui/utils';
 
 export default function LearningPathDetail() {
   const { id } = useParams();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updating, setUpdating] = useState(null); // Course ID being updated
+  const [updating, setUpdating] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -31,13 +33,11 @@ export default function LearningPathDetail() {
     setUpdating(courseId);
     try {
       await updateCourseProgress(courseId, !currentStatus);
-      // Optimistic update or refetch
       setCourses(prev => prev.map(c => 
         c.course_id === courseId ? { ...c, is_graduated: !currentStatus } : c
       ));
     } catch (err) {
       console.error('Failed to update progress', err);
-      alert('Failed to update progress');
     } finally {
       setUpdating(null);
     }
@@ -51,76 +51,103 @@ export default function LearningPathDetail() {
     return acc;
   }, {});
 
-  // Order levels if needed (assuming API returns them mixed, but usually we want specific order)
-  // The user said levels are 1: Dasar, 2: Pemula, etc. 
-  // We can rely on the order they appear or sort them if we had level_id.
-  // The API returns level_id, so we can sort the keys based on a representative course's level_id.
   const sortedLevels = Object.keys(coursesByLevel).sort((a, b) => {
     const levelIdA = coursesByLevel[a][0].level_id;
     const levelIdB = coursesByLevel[b][0].level_id;
     return levelIdA - levelIdB;
   });
 
-  if (loading) return <div className="text-center text-secondary py-8">Loading courses...</div>;
-  if (error) return <div className="text-center text-danger py-8">Error: {error}</div>;
+  if (loading) return (
+    <div className="flex h-[50vh] items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-[#36BFB0]" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="p-6 text-center text-destructive">
+      Error: {error}
+    </div>
+  );
 
   return (
-    <div>
-      <Link to="/" className="flex items-center gap-2 text-secondary mb-4 hover:text-white" style={{ display: 'inline-flex', marginBottom: '2rem' }}>
-        <ArrowLeft size={20} />
-        Back to Dashboard
-      </Link>
+    <div className="h-full overflow-y-auto bg-gray-50/50 dark:bg-background pb-20">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Link 
+          to="/roadmap" 
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Roadmap
+        </Link>
 
-      <h1 className="mb-4" style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>Course Curriculum</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground">Course Curriculum</h1>
+          <p className="text-muted-foreground mt-2">Master your skills with this comprehensive path</p>
+        </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        {sortedLevels.map(level => (
-          <div key={level}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem', color: 'var(--accent-primary)' }}>{level}</h2>
-            <div className="card" style={{ padding: '0' }}>
-              {coursesByLevel[level].map((course, index) => (
-                <div 
-                  key={course.course_id} 
-                  style={{ 
-                    padding: '1rem 1.5rem', 
-                    borderBottom: index === coursesByLevel[level].length - 1 ? 'none' : '1px solid var(--border-color)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '1rem'
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '0.25rem', color: course.is_graduated ? 'var(--success)' : 'var(--text-primary)' }}>
-                      {course.course_name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-secondary">
-                      <Clock size={14} />
-                      <span>{course.hours_to_study} Hours</span>
+        <div className="space-y-8">
+          {sortedLevels.map(level => (
+            <div key={level} className="space-y-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#36BFB0]" />
+                <h2 className="text-xl font-semibold text-foreground">{level}</h2>
+              </div>
+              
+              <Card className="border-0 shadow-sm bg-background">
+                <CardContent className="p-0 divide-y divide-border">
+                  {coursesByLevel[level].map((course) => (
+                    <div 
+                      key={course.course_id} 
+                      className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-1 min-w-0 pr-4">
+                        <h3 className={cn(
+                          "font-medium mb-1 truncate",
+                          course.is_graduated ? "text-green-600 dark:text-green-500" : "text-foreground"
+                        )}>
+                          {course.course_name}
+                        </h3>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{course.hours_to_study} Hours</span>
+                          </div>
+                          {course.is_graduated && (
+                            <span className="text-green-600 dark:text-green-500 flex items-center gap-1">
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              Completed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleToggle(course.course_id, course.is_graduated)}
+                        disabled={updating === course.course_id}
+                        className={cn(
+                          "rounded-full w-10 h-10 shrink-0",
+                          course.is_graduated 
+                            ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20" 
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                         {updating === course.course_id ? (
+                           <Loader2 className="w-5 h-5 animate-spin" />
+                         ) : course.is_graduated ? (
+                           <CheckCircle className="w-6 h-6 fill-green-100 dark:fill-green-900" />
+                         ) : (
+                           <Circle className="w-6 h-6" />
+                         )}
+                      </Button>
                     </div>
-                  </div>
-
-                  <button 
-                    onClick={() => handleToggle(course.course_id, course.is_graduated)}
-                    disabled={updating === course.course_id}
-                    className={clsx("btn", course.is_graduated ? "btn-primary" : "btn-outline")}
-                    style={{ 
-                      borderRadius: '9999px', 
-                      width: '40px', 
-                      height: '40px', 
-                      padding: 0,
-                      backgroundColor: course.is_graduated ? 'var(--success)' : 'transparent',
-                      borderColor: course.is_graduated ? 'var(--success)' : 'var(--border-color)',
-                      opacity: updating === course.course_id ? 0.7 : 1
-                    }}
-                  >
-                    {course.is_graduated ? <CheckCircle size={20} /> : <Circle size={20} />}
-                  </button>
-                </div>
-              ))}
+                  ))}
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
